@@ -132,7 +132,12 @@ public class FFmpegHelper {
 					ffmpeg = Utils.getFFMPEGname();
 					script = ffmpeg + " -f concat -safe 0 -i " + lstFile.getAbsolutePath()
 					+ " -acodec copy -vcodec copy " + target_file + " -y";// +"\r\n";
-				}else{
+				}else if(Utils.detectOS()==StaticResource.MAC){
+					ffmpeg = Fetcher.getFFMPEGpath() + File.separator + Utils.getFFMPEGname();
+					script = ffmpeg + " -f concat -safe 0 -i " + lstFile.getAbsolutePath()
+					+ " -acodec copy -vcodec copy " + target_file + " -y";// +"\r\n";
+				}
+				else{
 					ffmpeg = "\"" + Fetcher.getFFMPEGpath() + File.separator+ Utils.getFFMPEGname() + "\"";
 					script = ffmpeg + " -f concat -safe 0 -i \"" + lstFile.getAbsolutePath()
 					+ "\" -acodec copy -vcodec copy \"" + target_file + "\" -y";// +"\r\n";
@@ -194,7 +199,12 @@ public class FFmpegHelper {
 				ffmpeg = Utils.getFFMPEGname();
 				script = ffmpeg + " -f concat -safe 0 -i " + lstFile.getAbsolutePath()
 				+ " -acodec copy -vcodec copy " + target_file + " -y";// +"\r\n";
-			}else{
+			}else if(Utils.detectOS()==StaticResource.MAC){
+				ffmpeg = Fetcher.getFFMPEGpath() + File.separator + Utils.getFFMPEGname();
+				script = ffmpeg + " -f concat -safe 0 -i " + lstFile.getAbsolutePath()
+				+ " -acodec copy -vcodec copy " + target_file + " -y";// +"\r\n";
+			}
+			else{
 				ffmpeg = "\"" + Fetcher.getFFMPEGpath() + File.separator+ Utils.getFFMPEGname() + "\"";
 				script = ffmpeg + " -f concat -safe 0 -i \"" + lstFile.getAbsolutePath()
 				+ "\" -acodec copy -vcodec copy \"" + target_file + "\" -y";// +"\r\n";
@@ -206,7 +216,7 @@ public class FFmpegHelper {
 			String line;
 			String time = "time=";
 			while((line = errreader.readLine())!=null) {
-				//Utils.i("FFMPEG_combine", line,true);
+				Utils.i("FFMPEG_combine", line,true);
 				int d = line.indexOf(time);
 				if(d!=-1) {
 					d = d + time.length();
