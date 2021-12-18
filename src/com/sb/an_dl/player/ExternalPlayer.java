@@ -15,6 +15,7 @@ import com.sb.downport.animeconfig;
  * @author Sharn25
  * @version 1.0
  * @since 23-05-2021
+ * @update 17-12-2021 - updated VLC command for MAC
  */
 public class ExternalPlayer {
 	private static final String TAG = "ExternalPlayer";
@@ -27,7 +28,7 @@ public class ExternalPlayer {
 		Utils.l(TAG, "Starting VLC - Video: " + url + " Params: "+ params, true);
 		Process process1;
 		try {
-			String script = "vlc " + url + " " + params;
+			String script = getVLCcmd() + " " + url + " " + params;
 			process1 = Runtime.getRuntime().exec(script);			
 			return true;
 		} catch (IOException e) {
@@ -35,6 +36,17 @@ public class ExternalPlayer {
 			//e.printStackTrace();
 			Utils.e(TAG, "Something wrong with VLC. Please ensure VLC access throught CMD/Terminal.", true);
 			return false;
+		}
+	}
+	
+	private static String getVLCcmd() {
+		int OS=Utils.detectOS();
+		if(OS==StaticResource.LINUX) {
+			return StaticResource.VLCLinux;
+		}else if(OS==StaticResource.MAC) {
+			return StaticResource.VLCMAC;
+		}else {
+			return "";
 		}
 	}
 }

@@ -48,7 +48,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.x.LibXUtil;
 import javax.swing.JButton;
-import javax.rmi.CORBA.Util;
+//import javax.rmi.CORBA.Util;
 import javax.swing.Box;
 
 import java.awt.Dimension;

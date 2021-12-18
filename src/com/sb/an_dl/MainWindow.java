@@ -1556,8 +1556,9 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 		libbwr.setBounds(335, 201, 30, 24);
 		libbwr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(Utils.detectOS()==StaticResource.LINUX){
-					if(StaticResource.chkFFMPEGLibs("")){
+				int os = Utils.detectOS();
+				if(os==StaticResource.LINUX || os==StaticResource.MAC){
+					if(StaticResource.chkVLCLibs("")){
 						vlclibtxt.setText("Detected.");
 						animeconfig.isVLCInstalled = true;
 					}else {
@@ -1593,7 +1594,8 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 		if(an_con.isExternalPlayer){
 			cbExternalPlayer.setSelected(true);
 		}
-		if(Utils.detectOS()==StaticResource.LINUX){
+		int OS = Utils.detectOS();
+		if(OS==StaticResource.LINUX || OS==StaticResource.MAC){
 			cbExternalPlayer.setSelected(true);
 			cbExternalPlayer.setEnabled(false);
 			an_con.isExternalPlayer = true;
@@ -1642,7 +1644,7 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 						animeconfig.isFFMPEGexist = true;
 					}else {
 						SAlertDialog.showAlertInfo("Alert", "Libs not found. Please check the directry and try again.", frame);
-						animeconfig.isVLCInstalled = false;
+						animeconfig.isFFMPEGexist = false;
 					}
 				}else{
 					JFileChooser jfc = new JFileChooser();

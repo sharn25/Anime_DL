@@ -70,7 +70,10 @@ public class StaticResource {
 	public final static String EP_LOC = File.separator + "ep" + File.separator;
 	
 	//Linux Packages
-	public final static String VLC = "vlc";
+	public final static String VLCLinux = "vlc";
+	
+	//Mac Packages
+	public final static String VLCMAC="/Applications/VLC.app/Contents/MacOS/VLC";
 	
 	//url section
 	public final static String homeURL = "http://a.animedlweb.ga";
@@ -212,8 +215,12 @@ public class StaticResource {
 	}
 
 	public static boolean chkVLCLibs(String libpath) {
-		if(Utils.detectOS()==StaticResource.LINUX){
-			return LinuxUtils.isPackageInstalled(StaticResource.VLC + " --help");
+		int OS = Utils.detectOS();
+		if(OS==StaticResource.LINUX){
+			return LinuxUtils.isPackageInstalled(StaticResource.VLCLinux + " --help");
+		}else if(OS==StaticResource.MAC){
+			return new File(VLCMAC).exists();
+			
 		}
 		File f1 = new File(libpath, "libvlc" + Utils.getVLCname());
 		File f2 = new File(libpath, "libvlccore" + Utils.getVLCname());
