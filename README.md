@@ -1,7 +1,7 @@
 ![Banner](images/icon.png)<br>
 # Anime DL
 
-###Latest Version: v8.4 build 0004
+###Latest Version: v8.5 build 0000
 #### Modern GUI
 
 A simple app let you watch and bulk download anime with faster anime Browsing, Streaming and Downloading.
@@ -14,6 +14,9 @@ Steaming and Downloading animes becomes easy.
 
 ## Dark Theme
 ![screenshot](images/screenshot_dark.png "screenshot")
+
+## New Verison Feature and Changes in v8.5 build 0000
+* MacOS support added.
 
 ## New Verison Feature and Changes in v8.4 build 0004
 * Working sources fixed.
@@ -174,4 +177,11 @@ Discord Server Link:- https://discord.gg/Ee3fegN
 		* ffmpeg
 		* xdg-open
 	
+### MAC
+	- Internet
+	- Java 8 or higherinstalled.
+	- Install following packages
+		* vlc
+		* Download ffmpeg for Mac and map it in setting panel(https://www.osxexperts.net)
+
 Start the application from bat file for windows users or sh for Linux users if jar file not starts.

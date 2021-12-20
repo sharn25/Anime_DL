@@ -35,9 +35,6 @@ public class SimpleHeaderRenderer extends JPanel implements TableCellRenderer {
 		   
     public SimpleHeaderRenderer() {
     	
-       /* setFont(new Font("Consolas", Font.BOLD, 14));
-        setForeground(Color.BLUE);
-        setBorder(BorderFactory.createEtchedBorder());*/
     	super(new BorderLayout());
         this.setBorder(new EmptyBorder(0, 20, 0, 20));
         this.setBackground(StringResource.getColor("PANEL_BG_COLOR"));

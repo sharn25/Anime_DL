@@ -64,7 +64,7 @@ public class StaticResource {
 	public final static int FREE_SPACE = 99;
 	public final static int USED_SPACE = 88;
 	public final static int TOTAL_SPACE = 77;
-	public final static int CUR_VER = 28;
+	public final static int CUR_VER = 29;
 	public static final int WINDOWS = 10, MAC = 20, LINUX = 30;
 	public final static String ANIME_CONF = "anime.json";
 	public final static String EP_LOC = File.separator + "ep" + File.separator;

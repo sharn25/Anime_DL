@@ -216,7 +216,7 @@ public class FFmpegHelper {
 			String line;
 			String time = "time=";
 			while((line = errreader.readLine())!=null) {
-				Utils.i("FFMPEG_combine", line,true);
+				//Utils.l("FFMPEG_combine", line,true);
 				int d = line.indexOf(time);
 				if(d!=-1) {
 					d = d + time.length();

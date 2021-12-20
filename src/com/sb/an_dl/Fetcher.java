@@ -123,7 +123,9 @@ public class Fetcher {
 				animeurl = gaanimeurl;
 				animeicon = link.select("img").attr("src");
 				animedtl = "";
-
+				
+				Utils.l(TAG, "Adding " + animearry + " : " + animename,true);
+				
 				createarrylist(animearry);
 
 				mainwindow.setprogressstring(Integer.toString(animearry + 1) + "/" + Integer.toString(total));
@@ -139,7 +141,6 @@ public class Fetcher {
 			try {
 				Elements sel_VS = doc.select("ul.listing > li > a");
 				
-				Utils.l(TAG,"Size Source 1: " + doc.html(),true);
 				aryanime = new Anime[sel_VS.size()];
 				imagesary = new String[sel_VS.size()];
 				total = sel_VS.size();
@@ -151,6 +152,7 @@ public class Fetcher {
 					animename = tmp.attr("alt");
 					epnumber = "";
 					animedtl = "";
+					Utils.l(TAG, "Adding " + animearry + " : " + animename,true);
 					createarrylist(animearry);
 					mainwindow.setprogressstring(Integer.toString(animearry + 1) + "/" + Integer.toString(total));
 					animearry++;
@@ -585,7 +587,12 @@ public class Fetcher {
 						if (y == 0) {
 							if (Desktop.isDesktopSupported()) {
 								try {
-									Desktop.getDesktop().browse(new URI("https://www.ffmpeg.org/download.html"));
+									int os = Utils.detectOS();
+									if(os==StaticResource.MAC) {
+										Desktop.getDesktop().browse(new URI("https://www.osxexperts.net"));
+									}else {
+										Desktop.getDesktop().browse(new URI("https://www.ffmpeg.org/download.html"));	
+									}								
 								} catch (IOException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();

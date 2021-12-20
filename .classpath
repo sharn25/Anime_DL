@@ -8,10 +8,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="lib" path="libs/jsoup-1.11.2.jar"/>
-	<classpathentry kind="lib" path="/Users/sharn25/git/Anime_DL/libs/java-json.jar"/>
-	<classpathentry kind="lib" path="/Users/sharn25/git/Anime_DL/libs/jna-3.5.2.jar"/>
-	<classpathentry kind="lib" path="/Users/sharn25/git/Anime_DL/libs/platform-3.5.2.jar"/>
-	<classpathentry kind="lib" path="/Users/sharn25/git/Anime_DL/libs/vlcj-3.8.0.jar"/>
-	<classpathentry kind="lib" path="/Users/sharn25/git/Anime_DL/libs/slf4j-api-1.7.10.jar"/>
+	<classpathentry kind="lib" path="libs/java-json.jar"/>
+	<classpathentry kind="lib" path="libs/jna-3.5.2.jar"/>
+	<classpathentry kind="lib" path="libs/platform-3.5.2.jar"/>
+	<classpathentry kind="lib" path="libs/vlcj-3.8.0.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.7.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
