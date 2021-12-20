@@ -539,7 +539,8 @@ public class Fetcher {
 			/// Using Custom table model
 			aryanime[i] = new Anime(this.animename, this.animedtl, this.epnumber, image, this.animeurl);
 			if (an_con.source == 0) {
-				imagesary[i - 1] = this.animeicon;
+				//imagesary[i - 1] = this.animeicon;
+				imagesary[i] = this.animeicon;
 			} else {
 				imagesary[i] = this.animeicon;
 			}

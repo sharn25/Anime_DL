@@ -18,7 +18,7 @@ public class new21 extends ALFrame {
 
 	private JPanel contentPane;
 	private static String about = "<html><H1>Anime DL 8.5</H1>"
-			+ "build 0000"
+			+ "build 0001"
 			+ "<br>Stream & Download latest anime by direct link with integrated download manager"
 			+ "<br>Website:http://a.animedlweb.ga"
 			+ "<br>Developed by : SBdev(Sharn25)"

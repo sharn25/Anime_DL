@@ -36,7 +36,7 @@ public class Utils {
 	}
 	
 	public static void l(String tag, String msg, boolean z) {
-		if(z) {
+		if(false) {
 			System.out.println("[LOG] " + tag + " : " + msg);
 		}
 	}
