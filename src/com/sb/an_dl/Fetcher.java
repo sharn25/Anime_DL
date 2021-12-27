@@ -749,8 +749,12 @@ public class Fetcher {
 		try {
 			Elements dlink = doc.select("div.favorites_book > ul > li.dowloads > a");
 			String refernceurl = dlink.get(0).attr("href");
-			refernceurl = refernceurl.replace("download", "load.php");
-
+			Utils.l(TAG+M,"URL: " + refernceurl,true);
+			this.refernceURL = refernceurl;
+		
+			final_link = getDownloadVidStream(refernceurl,hdtype);
+		
+			/*
 			doc = getdoc(refernceurl, refernceurl, "");
 			this.refernceURL = refernceurl;
 			if (doc == null) {
@@ -761,7 +765,7 @@ public class Fetcher {
 			Elements s1 = doc.select("ul.list-server-items > li");
 			for (int i = 0; i < s1.size(); i++) {
 				String s_temp = s1.get(i).attr("data-video");
-				// Utils.l(TAG, "s_temp: " + s_temp, true);
+				Utils.l(TAG, "s_temp: " + s_temp, true);
 				if (s_temp.contains("gogoplay")) {
 					url = s1.get(i).attr("data-video");
 					break;
@@ -769,6 +773,8 @@ public class Fetcher {
 			}
 
 			doc = getdoc(url, "", "");
+			
+			//Utils.l(TAG, doc.html(), true);
 
 			Elements sel = doc.select("script[type=text/JavaScript]");
 			String p = null;
@@ -931,7 +937,8 @@ public class Fetcher {
 						}
 					}
 				}
-			}
+			}*/
+			
 			getpref(final_link);
 			downloadurl = final_link;
 			Utils.l(TAG + M, "Download_URL: " + downloadurl, true);
@@ -948,6 +955,35 @@ public class Fetcher {
 		}
 
 	}
+	
+	private String getDownloadVidStream(String url, String hdtype) {
+		String downloadURL = null, type = null;
+		Document doc = getdoc(url,"","");
+		int hd = Utils.stringToInt(hdtype);
+
+		Elements sel = doc.select("div.mirror_link");
+
+		if(sel.size()==0) {
+			return null;
+		}
+		
+		sel = sel.get(0).select("div.dowload > a");
+		for(int i = 0; i<sel.size();i++) {
+			String curURL = sel.get(i).attr("href");
+			
+			type = sel.get(i).text();
+			type = type.substring(type.indexOf(" ") + 2 ,type.indexOf("P"));
+			int curHD = Utils.stringToInt(type);
+			if(curHD==hd) {
+				return curURL;
+			}else if(curHD < hd){
+				//
+			}
+		}
+		return downloadURL;
+	}
+	
+	
 
 	private String[] geturls(String doctxt, String[] ary) {
 		int index = doctxt.indexOf("sources:[{file:");

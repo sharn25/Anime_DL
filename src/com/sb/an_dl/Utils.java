@@ -36,7 +36,7 @@ public class Utils {
 	}
 	
 	public static void l(String tag, String msg, boolean z) {
-		if(false) {
+		if(z) {
 			System.out.println("[LOG] " + tag + " : " + msg);
 		}
 	}
@@ -204,6 +204,16 @@ public class Utils {
 		default:
 			return "Please set the ffmpeg installation directory in settings tab for source 2 multi-resolution support.\nor\nClick yes to Download ffpmeg.zip and place in the same folder as Anime_Dl jar file.";
 		}
+	}
+	
+	public static int stringToInt(String s) {
+		int i =0;
+		try {
+			i = Integer.parseInt(s);
+		}catch(Exception e) {
+			i = 0;
+		}
+		return i;
 	}
 	
 }

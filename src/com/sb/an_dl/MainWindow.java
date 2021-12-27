@@ -3611,7 +3611,7 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 		Box hBoxSubDub = Box.createHorizontalBox();
 		hBoxSubDub.setAlignmentX(Component.LEFT_ALIGNMENT);
 		prefselct = new SComboBox();
-		if (an_con.source == 0 || an_con.source == 1) {
+		if (false) {
 			JLabel subdubLbl = new JLabel(StringResource.getString("SUBDUB"));
 			subdubLbl.setFont(StaticResource.materialFontSmallL);
 			subdubLbl.setBorder(new EmptyBorder(0, 5, 0, 0));
