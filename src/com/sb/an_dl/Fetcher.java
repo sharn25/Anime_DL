@@ -752,199 +752,17 @@ public class Fetcher {
 			Utils.l(TAG+M,"URL: " + refernceurl,true);
 			this.refernceURL = refernceurl;
 		
-			final_link = getDownloadVidStream(refernceurl,hdtype);
-		
-			/*
-			doc = getdoc(refernceurl, refernceurl, "");
-			this.refernceURL = refernceurl;
-			if (doc == null) {
-				ERROR_MSG = "Download Link not found.<br>CODE = #02";
-				error(TAG+M,mainwindow);
-				return;
-			}
-			Elements s1 = doc.select("ul.list-server-items > li");
-			for (int i = 0; i < s1.size(); i++) {
-				String s_temp = s1.get(i).attr("data-video");
-				Utils.l(TAG, "s_temp: " + s_temp, true);
-				if (s_temp.contains("gogoplay")) {
-					url = s1.get(i).attr("data-video");
-					break;
-				}
-			}
-
-			doc = getdoc(url, "", "");
-			
-			//Utils.l(TAG, doc.html(), true);
-
-			Elements sel = doc.select("script[type=text/JavaScript]");
-			String p = null;
-
-			for (int i = 0; i < sel.size(); i++) {
-				String s = sel.get(i).toString();
-				if (s.contains("sources:[{file:")) {
-					p = s;
-				}
-			}
-			if (p.contains("mp4")) {
-				hasMP4 = true;
-			}
-			sources = geturls(p, sources);
-			Utils.l(TAG, "source 3: " + sources[0], true);
-			if (!this.verify_link(sources[0], "")) {
-				hasMP4 = false;
-			}
-			if (hasMP4 && hdtype.contains("1080")) {
-				Utils.l(TAG + M, "MP4 Link: " + sources[0], true);
-				final_link = sources[0];
-			} else {
-				Utils.l(TAG + M, "Not Found MP4 Link 0: " + sources[0], true);
-				Utils.l(TAG + M, "Not Found MP4 Link 1: " + sources[1], true);
-				String url_hls = null;
-
-				if (sources[0].contains("m3u8")) {
-					url_hls = sources[0];
-				} else {
-					if (sources[1].contains("null")) {
-						ERROR_MSG = "Download Link not found.<br>CODE = #03";
-						error(TAG+M,mainwindow);
-						return;
-					} else if (sources[1].contains("m3u8")) {
-						url_hls = sources[1];
-					} else {
-						ERROR_MSG = "Download Link not found.<br>CODE = #04";
-						error(TAG+M,mainwindow);
-						return;
-					}
-				}
-
-				doc = getdoc(url_hls, refernceurl, "");
-				base_url = url_hls.substring(0, url_hls.lastIndexOf("/")) + "/";
-				if (doc == null) {
-					ERROR_MSG = "Download Link not found.<br>CODE = #05";
-					error(TAG+M,mainwindow);
-					return;
-				}
-				String s_hls = doc.body().text();
-				if (s_hls.contains(".ts")) {
-					Utils.l(TAG+M,"Direct m3u8 link.",true);
-					if (hasMP4) {
-						final_link = sources[0];
-					} else {
-						final_link = url_hls;
-					}
-				} else {
-					Utils.l(TAG + M, "Not Direct m3u8 link.", true);
-
-					boolean hasM3U8 = s_hls.contains("m3u8");
-					while (hasM3U8) {
-						int index_m3u8 = s_hls.lastIndexOf("m3u8");
-						s_hls = s_hls.substring(0, index_m3u8 + 4);
-						int l_index = s_hls.lastIndexOf(" ") + 1;
-						String name = s_hls.substring(l_index);
-						if (name.contains(hdtype)) {
-							final_link = base_url + name;
-							break;
-						} else {
-							int l_index2 = name.lastIndexOf(".");
-							String chk = name.substring(0, l_index2);
-							chk = chk.substring(chk.lastIndexOf(".") + 1);
-							if (Integer.parseInt(hdtype) < Integer.parseInt(chk)) {
-								final_link = base_url + name;
-							} else if (Integer.parseInt(hdtype) > Integer.parseInt(chk)) {
-								if (!hasSETURL) {
-									final_link = base_url + name;
-									hasSETURL = true;
-								}
-							}
-						}
-						s_hls = s_hls.substring(0, l_index);
-						hasM3U8 = s_hls.contains("m3u8");
-					}
-
-				}
-			}
-			gethdp(final_link);
-
-			if (final_link.contains(".m3u8") && !final_link.contains(hdtype)) {
-				if (!startall) {
-					if (!this.isDoShowQlty) {
-
-						String msg = "Unable to find the selected quality, want to procced with " + this.hdtype;
-						JPanel mainPanel = new JPanel(new BorderLayout());
-						mainPanel.setOpaque(true);
-						JPanel panel = new JPanel();
-						panel.setOpaque(false);
-						panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-						JLabel msgLbl = new JLabel(msg);
-						msgLbl.setBorder(new EmptyBorder(0, 10, 0, 0));
-						msgLbl.setFont(StaticResource.materialFontSmallL);
-						msgLbl.setForeground(StringResource.getColor("TEXT_COLOR"));
-						panel.add(msgLbl);
-						final SCheckBox chk = new SCheckBox(StringResource.getString("SHOW_DIALOG_AGAIN"));
-						chk.setFont(StaticResource.materialFontSmallLi);
-						panel.add(chk);
-						mainPanel.add(panel, "Center");
-						JPanel btnPanel = new JPanel();
-						btnPanel.setOpaque(false);
-						SButton okBtn = new SButton(StringResource.getString("YES_BTN"));
-						okBtn.setBackGround(StringResource.getColor("SEARCH_BG"));
-						okBtn.setBorderPainted(false);
-						okBtn.setHover(StringResource.getColor("SELECTION"));
-						okBtn.setFont(StaticResource.materialFontSmallL);
-						okBtn.setPressedColor(StringResource.getColor("PRESSED"));
-						okBtn.setForeground(StringResource.getColor("TEXT_COLOR"));
-						okBtn.setWidth(70);
-						okBtn.addActionListener(new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								// TODO Auto-generated method stub
-								action = true;
-								SAlertDialog.closeDialog();
-							}
-
-						});
-						btnPanel.add(okBtn);
-						SButton canelBtn = new SButton(StringResource.getString("NO_BTN"));
-						canelBtn.setBackGround(StringResource.getColor("SEARCH_BG"));
-						canelBtn.setBorderPainted(false);
-						canelBtn.setHover(StringResource.getColor("SELECTION"));
-						canelBtn.setFont(StaticResource.materialFontSmallL);
-						canelBtn.setPressedColor(StringResource.getColor("PRESSED"));
-						canelBtn.setForeground(StringResource.getColor("TEXT_COLOR"));
-						canelBtn.setWidth(70);
-						canelBtn.addActionListener(new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								// TODO Auto-generated method stub
-								action = false;
-								SAlertDialog.closeDialog();
-							}
-
-						});
-						btnPanel.add(canelBtn);
-						mainPanel.add(btnPanel, "South");
-						SAlertDialog.showAlertAction(StringResource.getString("DELETE_CONFIRM_TITLE"), mainPanel,
-								mainwindow, 350, 120);
-						if (!action) {
-							return;
-						} else {
-							if (chk.isSelected()) {
-								Utils.l("Fetcher_S3D!", "Checked not show again", true);
-								this.isDoShowQlty = true;
-							}
-						}
-					}
-				}
-			}*/
+			final_link = getDownloadVidStream(refernceurl,hdtype,startall,mainwindow);
 			
 			getpref(final_link);
 			downloadurl = final_link;
 			Utils.l(TAG + M, "Download_URL: " + downloadurl, true);
 			if (downloadurl != null) {
 				this.startdownload(downloadurl, epno, startall, mainwindow);
-			} else {
+			} else if(downloadurl.equals("NO")){
+				//
+			}
+			else{
 				throw new Exception();
 			}
 		} catch (Exception e) {
@@ -956,10 +774,12 @@ public class Fetcher {
 
 	}
 	
-	private String getDownloadVidStream(String url, String hdtype) {
+	private String getDownloadVidStream(String url, String hdtype,boolean startall, MainWindow mainwindow) {
 		String downloadURL = null, type = null;
 		Document doc = getdoc(url,"","");
 		int hd = Utils.stringToInt(hdtype);
+		int d = 1080;
+		int hdint = 0;
 
 		Elements sel = doc.select("div.mirror_link");
 
@@ -973,13 +793,88 @@ public class Fetcher {
 			
 			type = sel.get(i).text();
 			type = type.substring(type.indexOf(" ") + 2 ,type.indexOf("P"));
-			int curHD = Utils.stringToInt(type);
-			if(curHD==hd) {
+			hdint = Utils.stringToInt(type);
+			int curHD = Math.abs(hdint-hd);
+			if(hdint==hd) {
 				return curURL;
-			}else if(curHD < hd){
-				//
+			}else if(curHD < d){
+				d = curHD;
+				downloadURL = curURL;
 			}
 		}
+		
+		if (!startall) {
+			if (!this.isDoShowQlty) {
+
+				String msg = "Unable to find the selected quality, want to procced with " + hdint;
+				JPanel mainPanel = new JPanel(new BorderLayout());
+				mainPanel.setOpaque(true);
+				JPanel panel = new JPanel();
+				panel.setOpaque(false);
+				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+				JLabel msgLbl = new JLabel(msg);
+				msgLbl.setBorder(new EmptyBorder(0, 10, 0, 0));
+				msgLbl.setFont(StaticResource.materialFontSmallL);
+				msgLbl.setForeground(StringResource.getColor("TEXT_COLOR"));
+				panel.add(msgLbl);
+				final SCheckBox chk = new SCheckBox(StringResource.getString("SHOW_DIALOG_AGAIN"));
+				chk.setFont(StaticResource.materialFontSmallLi);
+				panel.add(chk);
+				mainPanel.add(panel, "Center");
+				JPanel btnPanel = new JPanel();
+				btnPanel.setOpaque(false);
+				SButton okBtn = new SButton(StringResource.getString("YES_BTN"));
+				okBtn.setBackGround(StringResource.getColor("SEARCH_BG"));
+				okBtn.setBorderPainted(false);
+				okBtn.setHover(StringResource.getColor("SELECTION"));
+				okBtn.setFont(StaticResource.materialFontSmallL);
+				okBtn.setPressedColor(StringResource.getColor("PRESSED"));
+				okBtn.setForeground(StringResource.getColor("TEXT_COLOR"));
+				okBtn.setWidth(70);
+				okBtn.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						// TODO Auto-generated method stub
+						action = true;
+						SAlertDialog.closeDialog();
+					}
+
+				});
+				btnPanel.add(okBtn);
+				SButton canelBtn = new SButton(StringResource.getString("NO_BTN"));
+				canelBtn.setBackGround(StringResource.getColor("SEARCH_BG"));
+				canelBtn.setBorderPainted(false);
+				canelBtn.setHover(StringResource.getColor("SELECTION"));
+				canelBtn.setFont(StaticResource.materialFontSmallL);
+				canelBtn.setPressedColor(StringResource.getColor("PRESSED"));
+				canelBtn.setForeground(StringResource.getColor("TEXT_COLOR"));
+				canelBtn.setWidth(70);
+				canelBtn.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						// TODO Auto-generated method stub
+						action = false;
+						SAlertDialog.closeDialog();
+					}
+
+				});
+				btnPanel.add(canelBtn);
+				mainPanel.add(btnPanel, "South");
+				SAlertDialog.showAlertAction(StringResource.getString("DELETE_CONFIRM_TITLE"), mainPanel,
+						mainwindow, 350, 120);
+				if (!action) {
+					downloadURL = "NO";
+				} else {
+					if (chk.isSelected()) {
+						Utils.l("Fetcher_S3D!", "Checked, not show again", true);
+						this.isDoShowQlty = true;
+					}
+				}
+			}
+		}
+		
 		return downloadURL;
 	}
 	
@@ -1068,206 +963,22 @@ public class Fetcher {
 			String url1 = sel_VS.attr("src");
 			String refernceurl = "https:" + url1;
 			Utils.l(TAG, "source 2: " + refernceurl, true);
-			refernceurl = refernceurl.replace("streaming.php", "load.php");
-
-			doc = getdoc(refernceurl, refernceurl, "");
+			refernceurl = refernceurl.replace("streaming.php","download");
 			this.refernceURL = refernceurl;
-			Utils.l(TAG + M, "refernceURL: " + this.refernceURL, true);
-			if (doc == null) {
-				ERROR_MSG = "Download Link not found.<br>CODE = #12";
-				error(TAG+M,mainwindow);
-				return;
-			}
-			Elements s1 = doc.select("ul.list-server-items > li");
-			Utils.l(TAG, "s1 Size: " + s1.size(), true);
-			for (int i = 0; i < s1.size(); i++) {
-				String s_temp = s1.get(i).attr("data-video");
-				if (s_temp.contains("gogoplay")) {
-					url = s1.get(i).attr("data-video");
-					break;
-				}
-			}
-
-			doc = getdoc(url, "", "");
-
-			Elements sel = doc.select("script[type=text/JavaScript]");
-			Utils.l("Fetcher S3D!", "" + Integer.toString(sel.size()), true);
-			String p = null;
-			for (int i = 0; i < sel.size(); i++) {
-				String s = sel.get(i).toString();
-				if (s.contains("sources:[{file:")) {
-					p = s;
-				}
-			}
-			if (p.contains("mp4")) {
-				hasMP4 = true;
-			}
-			sources = geturls(p, sources);
-			Utils.l(TAG, "source 3: " + sources[0], true);
-			if (!this.verify_link(sources[0], "")) {
-				hasMP4 = false;
-			}
-			if (hasMP4 && hdtype.contains("1080")) {
-				Utils.l(TAG + M, "MP4 Link: " + sources[0], true);
-				final_link = sources[0];
-			} else {// else start--------------------------
-				Utils.l(TAG + M, "Not Found MP4 Link 0: " + sources[0], true);
-				Utils.l(TAG + M, "Not Found MP4 Link 1: " + sources[1], true);
-				String url_hls = null;
-
-				if (sources[0].contains("m3u8")) {
-					url_hls = sources[0];
-				} else {
-					if (sources[1].contains("null")) {
-						ERROR_MSG = "Download Link not found.<br>CODE = #13";
-						error(TAG+M,mainwindow);
-						return;
-					} else if (sources[1].contains("m3u8")) {
-						url_hls = sources[1];
-					} else {
-						ERROR_MSG = "Download Link not found.<br>CODE = #14";
-						error(TAG+M,mainwindow);
-						return;
-					}
-				}
-
-				doc = getdoc(url_hls, refernceurl, "");
-				base_url = url_hls.substring(0, url_hls.lastIndexOf("/")) + "/";
-				Utils.l("Fetcher_S3D!", "Base_URL: " + base_url, true);
-				if (doc == null) {
-					ERROR_MSG = "Download Link not found.<br>CODE = #15";
-					error(TAG+M,mainwindow);
-					return;
-				}
-				String s_hls = doc.body().text();
-				if (s_hls.contains(".ts")) {
-					Utils.l(TAG + M, "ts found in link: " + s_hls, true);
-					// l("ts link found");
-					if (hasMP4) {
-						final_link = sources[0];
-					} else {
-						// l("hls start download: " + url_hls);
-						final_link = url_hls;
-					}
-
-				} else {
-					Utils.l(TAG + M, "Not Direct TS link: " + s_hls, true);
-					// l("Source: " + s_hls);
-
-					boolean hasM3U8 = s_hls.contains("m3u8");
-
-					while (hasM3U8) {
-						int index_m3u8 = s_hls.lastIndexOf("m3u8");
-						s_hls = s_hls.substring(0, index_m3u8 + 4);
-						int l_index = s_hls.lastIndexOf(" ") + 1;
-						String name = s_hls.substring(l_index);
-						// l("i: " +s_hls);
-						// l(name);
-						if (name.contains(hdtype)) {
-							// l("before");
-							final_link = base_url + name;
-							break;
-						} else {
-							int l_index2 = name.lastIndexOf(".");
-							String chk = name.substring(0, l_index2);
-							chk = chk.substring(chk.lastIndexOf(".") + 1);
-							// l("chk: "+chk);
-							if (Integer.parseInt(hdtype) < Integer.parseInt(chk)) {
-								// l("after");
-								final_link = base_url + name;
-							} else if (Integer.parseInt(hdtype) > Integer.parseInt(chk)) {
-								// l("after2");
-								if (!hasSETURL) {
-									final_link = base_url + name;
-									hasSETURL = true;
-								}
-							}
-						}
-
-						s_hls = s_hls.substring(0, l_index);
-						hasM3U8 = s_hls.contains("m3u8");
-					}
-
-				}
-			} 
+			
+			final_link = getDownloadVidStream(refernceurl,hdtype,startall,mainwindow);
+			
+			
 			gethdp(final_link);
 
-			if (final_link.contains(".m3u8") && !final_link.contains(hdtype)) {
-				if (!startall) {
-					if (!this.isDoShowQlty) {
-
-						String msg = "Unable to find the selected quality, want to procced with " + this.hdtype;
-						JPanel mainPanel = new JPanel(new BorderLayout());
-						mainPanel.setOpaque(true);
-						JPanel panel = new JPanel();
-						panel.setOpaque(false);
-						panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-						JLabel msgLbl = new JLabel(msg);
-						msgLbl.setBorder(new EmptyBorder(0, 10, 0, 0));
-						msgLbl.setFont(StaticResource.materialFontSmallL);
-						msgLbl.setForeground(StringResource.getColor("TEXT_COLOR"));
-						panel.add(msgLbl);
-						final SCheckBox chk = new SCheckBox(StringResource.getString("SHOW_DIALOG_AGAIN"));
-						chk.setFont(StaticResource.materialFontSmallLi);
-						panel.add(chk);
-						mainPanel.add(panel, "Center");
-						JPanel btnPanel = new JPanel();
-						btnPanel.setOpaque(false);
-						SButton okBtn = new SButton(StringResource.getString("YES_BTN"));
-						okBtn.setBackGround(StringResource.getColor("SEARCH_BG"));
-						okBtn.setBorderPainted(false);
-						okBtn.setHover(StringResource.getColor("SELECTION"));
-						okBtn.setFont(StaticResource.materialFontSmallL);
-						okBtn.setPressedColor(StringResource.getColor("PRESSED"));
-						okBtn.setForeground(StringResource.getColor("TEXT_COLOR"));
-						okBtn.setWidth(70);
-						okBtn.addActionListener(new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								action = true;
-								SAlertDialog.closeDialog();
-							}
-
-						});
-						btnPanel.add(okBtn);
-						SButton canelBtn = new SButton(StringResource.getString("NO_BTN"));
-						canelBtn.setBackGround(StringResource.getColor("SEARCH_BG"));
-						canelBtn.setBorderPainted(false);
-						canelBtn.setHover(StringResource.getColor("SELECTION"));
-						canelBtn.setFont(StaticResource.materialFontSmallL);
-						canelBtn.setPressedColor(StringResource.getColor("PRESSED"));
-						canelBtn.setForeground(StringResource.getColor("TEXT_COLOR"));
-						canelBtn.setWidth(70);
-						canelBtn.addActionListener(new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								action = false;
-								SAlertDialog.closeDialog();
-							}
-
-						});
-						btnPanel.add(canelBtn);
-						mainPanel.add(btnPanel, "South");
-						SAlertDialog.showAlertAction(StringResource.getString("DELETE_CONFIRM_TITLE"), mainPanel,
-								mainwindow, 350, 120);
-						if (!action) {
-							return;
-						} else {
-							if (chk.isSelected()) {
-								Utils.l("Fetcher_S3D!", "Checked not show again", true);
-								this.isDoShowQlty = true;
-							}
-						}
-					}
-				}
-			}
+			
 			getpref(final_link);
 			downloadurl = final_link;
 			Utils.l(TAG + M, "Download_URL: " + downloadurl, true);
 			if (downloadurl != null) {
 				this.startdownload(downloadurl, epno, startall, mainwindow);
+			}else if(downloadurl.equals("NO")){
+				//
 			} else {
 				throw new Exception();
 			}

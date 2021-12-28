@@ -1,7 +1,7 @@
 ![Banner](images/icon.png)<br>
 # Anime DL
 
-###Latest Version: v8.5 build 0001
+###Latest Version: v8.6 build 0000
 #### Modern GUI
 
 A simple app let you watch and bulk download anime with faster anime Browsing, Streaming and Downloading.
@@ -15,23 +15,27 @@ Steaming and Downloading animes becomes easy.
 ## Dark Theme
 ![screenshot](images/screenshot_dark.png "screenshot")
 
-## New Verison Feature and Changes in v8.5 build 0001
+## New Version  Feature and Changes in v8.6 build 0000
+* Source 0,1 fixed.
+* Source 0,1: added support for selecting 360p, 480p, 720p, 1080p.
+
+## New Version Feature and Changes in v8.5 build 0001
 * Fixed issue with Source 0: First anime not comming in panel.
 
-## New Verison Feature and Changes in v8.5 build 0000
+## New Version Feature and Changes in v8.5 build 0000
 * MacOS support added.
 
-## New Verison Feature and Changes in v8.4 build 0004
+## New Version Feature and Changes in v8.4 build 0004
 * Working sources fixed.
 * Removed Non-Working sources.
 
-## New Verison Feature and Changes in v8.3 build 0001
+## New Version Feature and Changes in v8.3 build 0001
 * Fixed for all Sources
 
-## New Verison Feature and Changes in v8.2 build 0001
+## New Version Feature and Changes in v8.2 build 0001
 * Fixed for all Sources
 
-## New Verison Feature and Changes in v8.1 build 0036
+## New Version Feature and Changes in v8.1 build 0036
 * Linux Support : Beta
 * Offline Anime Box : All your Downloaded animes in one place.(For future downloaded animes)
 * Scheduled Anime : WeekDay wise upcoming anime list.
