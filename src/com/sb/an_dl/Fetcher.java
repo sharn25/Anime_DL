@@ -116,7 +116,7 @@ public class Fetcher {
 				if (mainwindow.searchmode) {
 					epnumber = "";
 				} else {
-					epnumber = "Episode " + gaanimeurl.substring(i + 9);
+					//epnumber = "Episode " + gaanimeurl.substring(i + 9);
 				}
 				gaanimeurl = an_con.source_url[an_con.source] + "/category/"
 						+ gaanimeurl.substring(gaanimeurl.lastIndexOf("/") + 1, i);
@@ -731,22 +731,46 @@ public class Fetcher {
 		Utils.l(TAG+M, "url: " + url, true);
 		boolean hasMP4 = false;
 		boolean hasSETURL = false;
-		String hdtype = mainwindow.qlty;
+		String hdtype = "1080";
 		String final_link = "";
 		String base_url = "";
 		String[] sources = new String[2];
 
 		this.pref = "";
 		this.hdtype = "";
-
-		Document doc = getdoc(url, "", "");
 		String downloadurl = null;
+		
+		Document doc = getdoc(url, "", "");
+		
 		if (doc == null) {
 			ERROR_MSG = "Download Link not found.<br>CODE = #01";
 			error(TAG+M,mainwindow);
 			return;
 		}
 		try {
+			Element sel_ga = doc.selectFirst("li.mp4upload > a");
+			
+			this.refernceURL= sel_ga.attr("data-video");
+			doc = getdoc(sel_ga.attr("data-video"),"","");
+			if (doc == null) {
+				ERROR_MSG = "Download Link not found.<br>CODE = #02";
+				error(TAG+M,mainwindow);
+				return;
+			}
+			
+			Elements sel_script = doc.select("script");
+			
+			for(int i = 0 ; i <sel_script.size(); i++) {
+				String s = sel_script.get(i).html();
+				if(s.contains("|src|videojs")) {
+					s = s.substring(0,s.lastIndexOf("|src|videojs"));
+					s = s.substring(0,s.lastIndexOf("|"));
+					s = s.substring(s.lastIndexOf("|")+1);
+					downloadurl = "https://www3.mp4upload.com:282/d/" + s + "/video.mp4";
+					break;
+				}
+			}
+			/*
 			Elements dlink = doc.select("div.favorites_book > ul > li.dowloads > a");
 			String refernceurl = dlink.get(0).attr("href");
 			Utils.l(TAG+M,"URL: " + refernceurl,true);
@@ -755,12 +779,10 @@ public class Fetcher {
 			final_link = getDownloadVidStream(refernceurl,hdtype,startall,mainwindow);
 			
 			getpref(final_link);
-			downloadurl = final_link;
+			downloadurl = final_link;*/
 			Utils.l(TAG + M, "Download_URL: " + downloadurl, true);
 			if (downloadurl != null) {
 				this.startdownload(downloadurl, epno, startall, mainwindow);
-			} else if(downloadurl.equals("NO")){
-				//
 			}
 			else{
 				throw new Exception();
@@ -963,29 +985,59 @@ public class Fetcher {
 			String url1 = sel_VS.attr("src");
 			String refernceurl = "https:" + url1;
 			Utils.l(TAG, "source 2: " + refernceurl, true);
-			refernceurl = refernceurl.replace("streaming.php","download");
+			
+			doc = getdoc(refernceurl, "", "");
+			if (doc == null) {
+				ERROR_MSG = "Download Link not found.<br>CODE = #12";
+				error(TAG+M,mainwindow);
+				return;
+			}
+			
+			Elements sel_mp4 = doc.select("ul.list-server-items > li");
+			
+			for(int i = 0; i<sel_mp4.size(); i++) {
+				String mp4url = sel_mp4.get(i).attr("data-video");
+				if(mp4url.contains("mp4upload")){
+					refernceurl = mp4url;
+					break;
+				}
+				
+			}
+			
+			doc = getdoc(refernceurl,"","");
+			if (doc == null) {
+				ERROR_MSG = "Download Link not found.<br>CODE = #13";
+				error(TAG+M,mainwindow);
+				return;
+			}
+			
+			Elements sel_script = doc.select("script");
+			
+			for(int i = 0 ; i <sel_script.size(); i++) {
+				String s = sel_script.get(i).html();
+				if(s.contains("|src|videojs")) {
+					s = s.substring(0,s.lastIndexOf("|src|videojs"));
+					s = s.substring(0,s.lastIndexOf("|"));
+					s = s.substring(s.lastIndexOf("|")+1);
+					downloadurl = "https://www3.mp4upload.com:282/d/" + s + "/video.mp4";
+					break;
+				}
+			}
+			//refernceurl = refernceurl.replace("streaming.php","download");
+			
+			
+			//final_link = getDownloadVidStream(refernceurl,hdtype,startall,mainwindow);
 			this.refernceURL = refernceurl;
-			
-			final_link = getDownloadVidStream(refernceurl,hdtype,startall,mainwindow);
-			
-			
-			gethdp(final_link);
-
-			
-			getpref(final_link);
-			downloadurl = final_link;
 			Utils.l(TAG + M, "Download_URL: " + downloadurl, true);
 			if (downloadurl != null) {
 				this.startdownload(downloadurl, epno, startall, mainwindow);
-			}else if(downloadurl.equals("NO")){
-				//
-			} else {
+			}else {
 				throw new Exception();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			hdtype = "";
-			ERROR_MSG = "Download Link not found.<br>CODE = #16";
+			ERROR_MSG = "Download Link not found.<br>CODE = #14";
 			error(TAG+M,mainwindow);
 		}
 	}
@@ -1179,6 +1231,7 @@ public class Fetcher {
 			String downloadurl = p;
 			Utils.l(TAG + M, "Download_URL: " + downloadurl, true);
 			if (downloadurl != null) {
+				this.refernceURL = downloadurl;
 				this.startdownload(downloadurl, epno, startall, mainwindow);
 			} else {
 				throw new Exception();
@@ -1468,19 +1521,19 @@ public class Fetcher {
 
 	private void startdownloaddata(String url, String epno, boolean startall, MainWindow mainwindow) {
 		String animename1 = mainwindow.dwnanimename;
-		Utils.l("Fetcher_startdownlaod", animename1, true);
+		Utils.l("Fetcher_startdownlaod", "Anime Name: " + animename1, true);
 		animename1 = animename1.replaceAll(" ", "-");
 		animename1 = animename1.replaceAll(":", "-");
 		animename1 = animename1.replaceAll("\\?", "-");
 		animename1 = animename1.replaceAll("!", "-");
-		Utils.l("Fetcher_startdownlaod", "1 " + animename1, true);
+		//Utils.l("Fetcher_startdownlaod", "1 " + animename1, true);
 		animename1 = animename1.replaceAll("\\.", "");
-		Utils.l("Fetcher_startdownlaod", "2 " + animename1, true);
+		//Utils.l("Fetcher_startdownlaod", "2 " + animename1, true);
 		animename1 = animename1.trim();
 		if (animename1.length() > 50) {
 			animename1 = animename1.substring(0, 49);
 		}
-		Utils.l("Fetcher_startdownlaod", "3 " + animename1, true);
+		Utils.l("Fetcher_startdownlaod", "Anime Folder: " + animename1, true);
 		String destDir = an_con.destdir + File.separator + animename1;
 		File save = new File(destDir, StaticResource.EP_LOC);
 		gethdp(url);

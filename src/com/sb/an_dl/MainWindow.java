@@ -3650,7 +3650,7 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 		hdpselct.setMaximumSize(new Dimension(120, 24));
 		hBoxqty.add(hdpselct);
 		
-		if (an_con.source == 0 || an_con.source == 1 || an_con.source == 2) {
+		if (false) {
 			hdpselct.addItem("1080");
 			hdpselct.addItem("720");
 			hdpselct.addItem("480");

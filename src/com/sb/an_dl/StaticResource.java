@@ -54,8 +54,8 @@ public class StaticResource {
 	public static Font defaultfont = new Font("Tahoma", Font.PLAIN, 11);
 	public static Border borderblack = BorderFactory.createLineBorder(Color.black, 1);
 	public static String[] dtlsource = new String[] {
-			"<html>Name: Source 0<br>Quality: 360p, 480p, 720p, 1080p<br>Size: ~70mb - ~400mb<br>HighSpeed links.</html>",
-			"<html>Name: Source 1<br>Quality:  360p, 480p, 720p, 1080p<br>Size:~300mb<br>HighSpeed links.</html>",
+			"<html>Name: Source 0<br>Quality: 1080p<br>Size: ~100mb - ~400mb<br>HighSpeed links.</html>",
+			"<html>Name: Source 1<br>Quality: 1080p<br>Size:~100mb - ! ~400mb<br>HighSpeed links.</html>",
 			"<html>Name: Source 2<br>Quality: 1080p<br>Size: ~70mb - ~400mb<br>HighSpeed download links.<br>However, limited number of Animes</html>",
 			"<html>Name: Source 3(Spanish)<br>Quality: 1080p<br>Size: ~70mb - ~400mb<br>HighSpeed download links.</html>"};
 	public final static String[] weekday = new String[]{"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
@@ -64,7 +64,7 @@ public class StaticResource {
 	public final static int FREE_SPACE = 99;
 	public final static int USED_SPACE = 88;
 	public final static int TOTAL_SPACE = 77;
-	public final static int CUR_VER = 31;
+	public final static int CUR_VER = 32;
 	public static final int WINDOWS = 10, MAC = 20, LINUX = 30;
 	public final static String ANIME_CONF = "anime.json";
 	public final static String EP_LOC = File.separator + "ep" + File.separator;
