@@ -55,9 +55,9 @@ public class animeconfig extends Observable implements Serializable {
    public boolean Default_Location;
    public boolean Default_downloader;
    public int source;
-   public int tablesize;//								2						3						
-   public static String[] source_url = new String[] {"https://gogoanime.pe","https://gogoplay1.com","https://tenshi.moe","https://www.animefenix.com/"};
-   public static String[] source_names = new String[] {"SUB-DUB",				"SUB-DUB",				 "SUB",				  "Spanish-SUBBED"};
+   public int tablesize;//								0						1						2					3		
+   public static String[] source_url = new String[] {"https://gogoanime.pe","https://gogoplay1.com","https://7anime.cc","https://www.animefenix.com"};
+   public static String[] source_names = new String[] {"SUB-DUB",				"SUB-DUB",				 "SUB-DUB",				  "Spanish-SUBBED"};
    public static String scheduleURL = "https://api.jikan.moe/v3/schedule/";
    public static String server="http://st2.anime1.com";
    public String[] epid;
@@ -117,6 +117,7 @@ public class animeconfig extends Observable implements Serializable {
    public boolean isShowHintEnabled;
    public static boolean isFFMPGInstalled;
    public static boolean isVLCInstalled;
+   public String id;
    
    //public int currentdwnld;
    public String getDefaultShutdownCommand() {

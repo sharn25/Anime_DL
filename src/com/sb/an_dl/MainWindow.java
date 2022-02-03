@@ -304,6 +304,7 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 							an_con.save();
 							File frecdirconfig = new File(fAppDir, ".recent_watch");
 							Recent_Watching.get_inten().save(frecdirconfig);
+							frame.idReg();
 						}
 					});
 					frame.setVisible(true);
@@ -402,7 +403,7 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 
 			Utils.i("MainWindow", fAppDir.getAbsolutePath(), true);
 			an_con.appdir = fAppDir.getAbsolutePath();
-			an_con.source = 1;
+			an_con.source = 0;
 			an_con.destdir = destDir.getAbsolutePath();
 			Utils.i("MainWindow", an_con.destdir, true);
 			an_con.tempdir = fTmpDir.getAbsolutePath();
@@ -412,7 +413,7 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 			an_con.maxdownloads = 5;
 			an_con.isDarkTheme = false;
 			an_con.isShowHintEnabled = true;
-			fetch.db();
+			
 			Utils.i("MainWindow", "Default config loaded...", true);
 		}
 		// an_con.isShowHintEnabled=true;
@@ -422,6 +423,12 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 		fetch.loadVLCLibs();
 		fetch.loadFFMPEGLibs();
 		fetch.getAnoucment();
+		if(an_con.id == null) {
+			fetch.db();
+		}else {
+			Utils.l(TAG, "ID: " + an_con.id, true);
+		}
+		fetch.idReg("1");
 
 		// init Resources
 		initResources();
@@ -3650,7 +3657,7 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 		hdpselct.setMaximumSize(new Dimension(120, 24));
 		hBoxqty.add(hdpselct);
 		
-		if (false) {
+		if (an_con.source == 2) {
 			hdpselct.addItem("1080");
 			hdpselct.addItem("720");
 			hdpselct.addItem("480");
@@ -4299,6 +4306,10 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
+	}
+	
+	private void idReg() {
+		fetch.idReg("0");
 	}
 
 }

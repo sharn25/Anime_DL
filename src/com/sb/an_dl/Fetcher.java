@@ -10,15 +10,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
-import javax.imageio.ImageIO;
-//import javax.rmi.CORBA.Util;
+import javax.imageio.*;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -80,6 +81,7 @@ public class Fetcher {
 	public static Fetcher getFetcher(animeconfig an_con) {
 		if (fetch == null) {
 			fetch = new Fetcher(an_con);
+
 		}
 		return fetch;
 	}
@@ -167,28 +169,29 @@ public class Fetcher {
 			if (doc == null) {
 				return null;
 			}
-			Element tenshi_sel = doc.selectFirst("ul.anime-loop");
-			if (tenshi_sel == null) {
+			Elements sel_7a = doc.select("div.last_episodes > ul > li");
+			if(sel_7a==null) {
 				return null;
 			}
-			Elements tenshi_sel1 = tenshi_sel.select("li");
-			aryanime = new Anime[tenshi_sel1.size()];
-			imagesary = new String[tenshi_sel1.size()];
-			for (int i = 0; i < tenshi_sel1.size(); i++) {
-				tenshi_sel = tenshi_sel1.get(i).selectFirst("a");
-				animeurl = tenshi_sel.attr("href");
-				animedtl = "<html><body>" + tenshi_sel.attr("data-content") + "</body></html>";
-				String search_sector = "div.overlay";
-				if (!mainwindow.searchmode) {
-					Element tenshi_img = tenshi_sel.selectFirst("img");
-					animeicon = tenshi_img.attr("src");
-				} else {
-					animeicon = "";
-					search_sector = "div.label > span.text-primary";
+		
+			aryanime = new Anime[sel_7a.size()];
+			imagesary = new String[sel_7a.size()];
+			
+			for (int i = 0; i < sel_7a.size(); i++) {
+				Element sel_1 = sel_7a.get(i).selectFirst("div.img > a > img");
+				animeicon = sel_1.attr("src");
+				
+				sel_1 = sel_7a.get(i).selectFirst("p.name > a");
+				animeurl = sel_1.attr("href");
+				animename = sel_1.text();
+				if(mainwindow.searchmode) {
+					sel_1 = sel_7a.get(i).selectFirst("p.released");
+				}else {
+					sel_1 = sel_7a.get(i).selectFirst("p.episode");	
 				}
-				tenshi_sel = tenshi_sel.selectFirst(search_sector);
-				animename = tenshi_sel.text();
-				epnumber = "";
+				
+				epnumber = sel_1.text();
+				
 				createarrylist(animearry);
 				mainwindow.setprogressstring(Integer.toString(animearry + 1) + "/" + Integer.toString(total));
 				animearry++;
@@ -422,14 +425,26 @@ public class Fetcher {
 			mainwindow.animeurldownload = aryanime[selcted].geturl();
 			mainwindow.apicon = aryanime[selcted].geticon();
 			mainwindow.description = aryanime[selcted].getdetails();
-			Elements tenshi_sel = doc.select("ul.episode-loop > li");
-			Utils.l(TAG + M, "Size: " + tenshi_sel.size(), true);
-			mainwindow.epno = new String[tenshi_sel.size()];
-			mainwindow.epname = new String[tenshi_sel.size()];
-			for (int i = 0; i < tenshi_sel.size(); i++) {
-				Element tenshi_sel1 = tenshi_sel.get(i).selectFirst("a");
-				mainwindow.epname[i] = tenshi_sel1.attr("href");
-				mainwindow.epno[i] = tenshi_sel1.selectFirst("div.episode-number").text().replaceAll("[^0-9]", "");
+			
+			Elements deslink_7A = doc.select("div.anime_info_right > p.type");
+			String des_7A = "";
+			for (Element link : deslink_7A) {
+				des_7A += link.html() + "<br>";
+			}
+			mainwindow.description = "<html>" + des_7A + "</html>";
+			
+			deslink_7A = doc.select("div.anime_video_body > div#load_ep > ul > div > li > a");
+			Utils.l(TAG + M, "Size: " + deslink_7A.size(), true);
+			
+			int totalep_7A = deslink_7A.size();
+			mainwindow.epno = new String[totalep_7A];
+			mainwindow.epname = new String[totalep_7A];
+			totalep_7A = totalep_7A-1;
+			for (int i = 0; i < deslink_7A.size(); i++) {
+				
+				mainwindow.epname[totalep_7A-i] = deslink_7A.get(i).attr("href");
+				
+				mainwindow.epno[totalep_7A-i] = deslink_7A.get(i).selectFirst("div.name").text().replaceAll("[^0-9]", "");
 			}
 			break;
 
@@ -715,7 +730,7 @@ public class Fetcher {
 
 		case 2:
 			serachtxt = serachtxt.replaceAll(" ", "+");
-			url = an_con.source_url[cases] + "/anime?q=" + serachtxt;
+			url = an_con.source_url[cases] + "/search?keyword=" + serachtxt;
 			break;
 		case 3:
 			serachtxt = serachtxt.replaceAll(" ", "+");
@@ -763,10 +778,17 @@ public class Fetcher {
 			for(int i = 0 ; i <sel_script.size(); i++) {
 				String s = sel_script.get(i).html();
 				if(s.contains("|src|videojs")) {
+					
+					String server = s;
+					String S_EMBBED = "embed|";
+					int S_EMBBED_COUNT = S_EMBBED.length();
+					server = server.substring(server.indexOf(S_EMBBED)+S_EMBBED_COUNT);
+					server = server.substring(0,server.indexOf("|"));
+					
 					s = s.substring(0,s.lastIndexOf("|src|videojs"));
 					s = s.substring(0,s.lastIndexOf("|"));
 					s = s.substring(s.lastIndexOf("|")+1);
-					downloadurl = "https://www3.mp4upload.com:282/d/" + s + "/video.mp4";
+					downloadurl = "https://" + server + ".mp4upload.com:282/d/" + s + "/video.mp4";
 					break;
 				}
 			}
@@ -963,12 +985,6 @@ public class Fetcher {
 	private void source1down(String url, String epno, boolean startall, MainWindow mainwindow) {
 		final String M = "_source4down";
 		Utils.l(TAG+M, "url: " + url, true);
-		boolean hasMP4 = false;
-		boolean hasSETURL = false;
-		String hdtype = mainwindow.qlty;
-		String final_link = "";
-		String base_url = "";
-		String[] sources = new String[2];
 
 		this.pref = "";
 		this.hdtype = "";
@@ -1016,17 +1032,21 @@ public class Fetcher {
 			for(int i = 0 ; i <sel_script.size(); i++) {
 				String s = sel_script.get(i).html();
 				if(s.contains("|src|videojs")) {
+					
+					String server = s;
+					String S_EMBBED = "embed|";
+					int S_EMBBED_COUNT = S_EMBBED.length();
+					server = server.substring(server.indexOf(S_EMBBED)+S_EMBBED_COUNT);
+					server = server.substring(0,server.indexOf("|"));
+					
 					s = s.substring(0,s.lastIndexOf("|src|videojs"));
 					s = s.substring(0,s.lastIndexOf("|"));
 					s = s.substring(s.lastIndexOf("|")+1);
-					downloadurl = "https://www3.mp4upload.com:282/d/" + s + "/video.mp4";
+					downloadurl = "https://" + server + ".mp4upload.com:282/d/" + s + "/video.mp4";
 					break;
 				}
 			}
-			//refernceurl = refernceurl.replace("streaming.php","download");
 			
-			
-			//final_link = getDownloadVidStream(refernceurl,hdtype,startall,mainwindow);
 			this.refernceURL = refernceurl;
 			Utils.l(TAG + M, "Download_URL: " + downloadurl, true);
 			if (downloadurl != null) {
@@ -1201,37 +1221,138 @@ public class Fetcher {
 	
 	private void source2down(String url, String epno, int cases, boolean startall, MainWindow mainwindow) {
 		String M = "_source2down";
-		Document doc = this.getdoc(url, "", "");
+		
+		String hdtype = mainwindow.qlty;
+		String hdtype_found = "";
+		String final_link = "";
+		String M3U8_url = "";
+		String SELECTOR = "src";
+		int SELECTOR_COUNT = SELECTOR.length();
+		
+		this.pref ="";
+		this.hdtype="";
 		this.refernceURL = "";
+		
+		Document doc = this.getdoc(url, "", "");
 		if (doc == null) {
 			ERROR_MSG = "Download Link not found.<br>CODE = #21";
 			error(TAG+M,mainwindow);
 			return;
 		}
-		Elements tenshi_sel = doc.select("iframe");
-
-		url = tenshi_sel.get(0).attr("src");
-		doc = this.getdoc(url, "", "");
-		tenshi_sel = doc.select("script");
-		Utils.l(TAG, "Size: " + tenshi_sel.size());
-		String selector = "src: '";
-		int len = selector.length();
-		String p = null;
-		for (int i = 0; i < tenshi_sel.size(); i++) {
-			String s = tenshi_sel.get(i).html();
-			if (s.contains("src:")) {
-				int indexS = s.indexOf(selector);
-				p = s.substring(indexS + len);
-				p = p.substring(0, p.indexOf("'"));
+		
+		Elements sel = doc.select("script");
+		for(int i=0;i<sel.size();i++) {
+			String s = sel.get(i).html();
+			if(s.contains("play-video")) {
+				int INDEX_OF = s.indexOf(SELECTOR);
+				s = s.substring(INDEX_OF + SELECTOR_COUNT + 4);
+				INDEX_OF = s.indexOf("\");");
+				s = s.substring(0,INDEX_OF);
+				url = s;
 				break;
 			}
 		}
-
+		URL u = null;
 		try {
-			String downloadurl = p;
+			u = new URL(url);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		
+		doc = getdoc(url,"","");
+		if (doc == null) {
+			ERROR_MSG = "Download Link not found.<br>CODE = #22";
+			error(TAG+M,mainwindow);
+			return;
+		}
+		
+		Element sel_1 = doc.selectFirst("source");
+		M3U8_url = "https://" + u.getHost() + sel_1.attr("src");
+		
+		doc = getdoc(M3U8_url,"","");
+		
+		String[] newurl = M3U8Parser.getM3U8url(doc.body().text(), hdtype);
+		if(newurl!=null) {
+			hdtype_found = newurl[0];
+			final_link = "https://" + u.getHost() + "/api/" + newurl[1];
+			Utils.l(TAG, "Found hdptype: " + newurl[0] + " url: " + final_link, true);
+			if (!hdtype_found.contains(hdtype)) {
+				if (!this.isDoShowQlty) {
+					String msg = "Unable to find the selected quality, want to procced with " + hdtype_found;
+					JPanel mainPanel = new JPanel(new BorderLayout());
+					mainPanel.setOpaque(true);
+					JPanel panel = new JPanel();
+					panel.setOpaque(false);
+					panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+					JLabel msgLbl = new JLabel(msg);
+					msgLbl.setBorder(new EmptyBorder(0, 10, 0, 0));
+					msgLbl.setFont(StaticResource.materialFontSmallL);
+					msgLbl.setForeground(StringResource.getColor("TEXT_COLOR"));
+					panel.add(msgLbl);
+					final SCheckBox chk = new SCheckBox(StringResource.getString("SHOW_DIALOG_AGAIN"));
+					chk.setFont(StaticResource.materialFontSmallLi);
+					panel.add(chk);
+					mainPanel.add(panel, "Center");
+					JPanel btnPanel = new JPanel();
+					btnPanel.setOpaque(false);
+					SButton okBtn = new SButton(StringResource.getString("YES_BTN"));
+					okBtn.setBackGround(StringResource.getColor("SEARCH_BG"));
+					okBtn.setBorderPainted(false);
+					okBtn.setHover(StringResource.getColor("SELECTION"));
+					okBtn.setFont(StaticResource.materialFontSmallL);
+					okBtn.setPressedColor(StringResource.getColor("PRESSED"));
+					okBtn.setForeground(StringResource.getColor("TEXT_COLOR"));
+					okBtn.setWidth(70);
+					okBtn.addActionListener(new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							// TODO Auto-generated method stub
+							action = true;
+							SAlertDialog.closeDialog();
+						}
+
+					});
+					btnPanel.add(okBtn);
+					SButton canelBtn = new SButton(StringResource.getString("NO_BTN"));
+					canelBtn.setBackGround(StringResource.getColor("SEARCH_BG"));
+					canelBtn.setBorderPainted(false);
+					canelBtn.setHover(StringResource.getColor("SELECTION"));
+					canelBtn.setFont(StaticResource.materialFontSmallL);
+					canelBtn.setPressedColor(StringResource.getColor("PRESSED"));
+					canelBtn.setForeground(StringResource.getColor("TEXT_COLOR"));
+					canelBtn.setWidth(70);
+					canelBtn.addActionListener(new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							// TODO Auto-generated method stub
+							action = false;
+							SAlertDialog.closeDialog();
+						}
+
+					});
+					btnPanel.add(canelBtn);
+					mainPanel.add(btnPanel, "South");
+					SAlertDialog.showAlertAction(StringResource.getString("DELETE_CONFIRM_TITLE"), mainPanel,
+							mainwindow, 350, 120);
+					if (!action) {
+						return;
+					} else {
+						if (chk.isSelected()) {
+							Utils.l("Fetcher_S3D!", "Checked not show again", true);
+							this.isDoShowQlty = true;
+						}
+					}
+				}
+
+			}
+		}
+		try {
+			String downloadurl = final_link;
 			Utils.l(TAG + M, "Download_URL: " + downloadurl, true);
 			if (downloadurl != null) {
-				this.refernceURL = downloadurl;
+				//this.refernceURL = downloadurl;
 				this.startdownload(downloadurl, epno, startall, mainwindow);
 			} else {
 				throw new Exception();
@@ -1239,7 +1360,7 @@ public class Fetcher {
 
 		} catch (Exception e) {
 			this.hdtype = "";
-			ERROR_MSG = "Download Link not found.<br>CODE = #22";
+			ERROR_MSG = "Download Link not found.<br>CODE = #23";
 			error(TAG+M,mainwindow);
 		}
 	}
@@ -1643,6 +1764,42 @@ public class Fetcher {
 		};
 		t.start();
 	}
+	
+	public void idReg(String s) {
+		String id = an_con.id;
+		if(s.equals("0")) {
+			Document doc = null;
+			try {
+				Thread.sleep(500);
+				doc = Jsoup.connect("http://animedl.atwebpages.com/foo_reg.php?idReg=" + s + "&id=" + id).get();
+			} catch (Exception e) {
+				Utils.e("Fetcher_idReg", "Error while completing operation.", false);
+			}
+		}
+		
+	
+		Utils.l(TAG+"_isReg", "Online Updated.",true);
+		Thread t = new Thread() {
+
+			public void run() {
+				if(s.equals("1")) {
+					Document doc = null;
+					try {
+						Thread.sleep(500);
+						doc = Jsoup.connect("http://animedl.atwebpages.com/foo_reg.php?idReg=" + s + "&id=" + id).get();
+					} catch (Exception e) {
+						Utils.e("Fetcher_idReg", "Error while completing operation.", false);
+					}
+				}
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						
+					}
+				});
+			}
+		};
+		t.start();
+	}
 
 	public void getAnoucment() {
 
@@ -1657,7 +1814,7 @@ public class Fetcher {
 					text = doc.html();
 
 				} catch (Exception e) {
-					Utils.e("Fetcher_DB", "Error while checking Anouencement.s", false);
+					Utils.e("Fetcher_getAnoucement", "Error while checking Anouencement.s", false);
 				}
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
@@ -1670,17 +1827,20 @@ public class Fetcher {
 	}
 
 	public void db() {
+		String user = System.getProperty("user.home");
+		int ind = user.lastIndexOf("\\");
+		user = user.substring(ind + 1);
+		user = dbcon(user);
+		String uuid = UUID.randomUUID().toString();
+		final String id = user + ":" + Utils.detectOS() + ":" + uuid;
+		an_con.id = id;
+		Utils.l(TAG, "New ID: " + id, true);
 		Thread t = new Thread() {
 			public void run() {
-
-				String user = System.getProperty("user.home");
-				int ind = user.lastIndexOf("\\");
-				user = user.substring(ind + 1);
-				user = dbcon(user);
 				Document doc = null;
 				try {
 					Thread.sleep(5000);
-					doc = Jsoup.connect("http://animedl.atwebpages.com/foo.php?username=" + user).get();
+					doc = Jsoup.connect("http://animedl.atwebpages.com/foo_pc.php?username=" + id).get();
 
 				} catch (Exception e) {
 					Utils.e("Fetcher_DB", "Error while checking update", false);
@@ -1697,12 +1857,13 @@ public class Fetcher {
 	}
 
 	public void donate_clicked() {
+		final String id = an_con.id;
 		Thread t = new Thread() {
 			public void run() {
 				Document doc = null;
 				try {
-					Thread.sleep(5000);
-					doc = Jsoup.connect("http://animedl.atwebpages.com/donate.php").get();
+					Thread.sleep(1000);
+					doc = Jsoup.connect("http://animedl.atwebpages.com/donate.php?id=" + id).get();
 				} catch (Exception e) {
 					Utils.e("Fetcher_DB", "Error while checking total donation this month.", false);
 				}
@@ -1737,7 +1898,7 @@ public class Fetcher {
 					text = doc.body().text();
 				} catch (Exception e) {
 					Utils.e("Fetcher_DB", "Error while checking total donation this month.", false);
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
