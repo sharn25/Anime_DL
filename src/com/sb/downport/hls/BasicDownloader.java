@@ -87,7 +87,7 @@ public class BasicDownloader implements Runnable {
 				//size = conn.getContentLength();
 				int rc = conn.getResponseCode();
 				file_length = conn.getContentLength();
-				Utils.l(TAG, "rc response: " + rc,true);
+				Utils.l(TAG, "rc response: " + rc,false);
 				if (!(rc == 200 || rc == 206)) {
 					throw new Error("Error downloading video");
 				}

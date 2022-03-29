@@ -252,7 +252,8 @@ public class Fetcher {
 				if (snopsis.length() > 100) {
 					snopsis.substring(0, 100);
 				}
-				String des = "<html><body><ul>" + "<li>Type: " + animeObj.getString("type") + "</li><li>MAL Score: "
+				
+				String des = "<html><body><ul><li>MAL Score: "
 						+ score + "</li><li>Description: " + snopsis + "</li></ul><body><html>";
 				Anime a = new Anime(animeObj.getString("title"), des, "", setimg(false, "", 0),
 						animeObj.getString("url"));
@@ -261,7 +262,6 @@ public class Fetcher {
 			}
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			ERROR_MSG = "Error while fetching data.<br>CODE = #X01";
 			Utils.e(TAG + M, ERROR_MSG, true);
@@ -330,7 +330,6 @@ public class Fetcher {
 			ERROR_MSG = "Unexpected Error! Try checking your internet connection.";
 			Utils.e("Fetcher_getdoc", ERROR_MSG, true);
 			MainWindow.setstatus_loggger(ERROR_MSG);
-			// Utils.timer.cancel();
 			doc = null;
 		}
 		if (doc == null) {

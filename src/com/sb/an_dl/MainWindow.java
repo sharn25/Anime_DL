@@ -1246,7 +1246,11 @@ public class MainWindow extends ALFrame implements ActionListener, DownloadState
 							JSONObject obj = animeConf.getAnimeObj();
 							String name = obj.getString("name");
 							String epnum = obj.getString("epnum");
-							String details = obj.getString("details");
+							String details = "";
+							if(obj.has("details")){
+								details = obj.getString("details");
+							}
+							
 							String url = obj.getString("url");
 							ImageIcon icon = StaticResource.getAnimeIcon(obj.getString("icon"));
 							Anime anime = new Anime(name, details, epnum, icon, url);
